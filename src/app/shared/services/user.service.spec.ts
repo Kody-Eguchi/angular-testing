@@ -1,11 +1,21 @@
 import { UserInterface } from "../types/user.interface";
 import { UserService } from "./users.service";
 import { TestBed } from '@angular/core/testing';
+import { UtilsService } from "./utils.service";
 describe('UserService', () => {
   let userService: UserService;
+
+  const utilsServiceMock = {
+    pluck: jest.fn(),
+
+  }
+
+
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [UserService],
+      providers: [
+        UserService,
+        { provide: UtilsService, useValue: utilsServiceMock}],
     });
 
     userService = TestBed.inject(UserService);
@@ -30,6 +40,13 @@ describe('UserService', () => {
       userService.users = [{ id: '3', name: 'foo'}];
       userService.removeUser('3');
       expect(userService.users).toEqual([]);
+    })
+  })
+
+  describe('getUsernames', () => {
+    it('should get usernames', () => {
+      utilsServiceMock.pluck.mockReturnValue(['foo'])
+      expect(userService.getUsernames()).toEqual(['foo']);
     })
   })
 
